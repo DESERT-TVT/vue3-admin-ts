@@ -4,12 +4,12 @@
       <div class="title-container">
         <h3 class="title text-center">{{ settings.title }}</h3>
       </div>
-      <el-form-item prop="keyword" :rules="formRules.isNotNull('usename不能为空')">
+      <el-form-item prop="username" :rules="formRules.isNotNull('用户名不能为空')">
         <div class="rowSC">
           <span class="svg-container">
             <svg-icon icon-class="user" />
           </span>
-          <el-input v-model="subForm.keyword" placeholder="用户名(admin)" />
+          <el-input v-model="subForm.username" placeholder="用户名" />
           <!--占位-->
           <div class="show-pwd" />
         </div>
@@ -26,7 +26,7 @@
             v-model="subForm.password"
             :type="passwordType"
             name="password"
-            placeholder="password(123456)"
+            placeholder="密码"
             @keyup.enter="handleLogin"
           />
           <span class="show-pwd" @click="showPwd">
@@ -36,7 +36,7 @@
       </el-form-item>
       <div class="tip-message">{{ tipMessage }}</div>
       <el-button :loading="subLoading" type="primary" class="login-btn" size="default" @click.prevent="handleLogin">
-        Login
+        登陆
       </el-button>
     </el-form>
   </div>
@@ -55,8 +55,8 @@ const { settings } = useBasicStore()
 const formRules = useElement().formRules
 //form
 const subForm = reactive({
-  keyword: 'panda',
-  password: '123456'
+  username: '',
+  password: ''
 })
 const state:any = reactive({
   otherQuery: {},
@@ -100,10 +100,13 @@ const router = useRouter()
 const basicStore = useBasicStore()
 
 const loginFunc = () => {
-  loginReq(subForm)
+  loginReq({
+    username: subForm.username,
+    // password: sm2Encrypt(subForm.password)
+  })
     .then(({ data }) => {
       elMessage('登录成功')
-      basicStore.setToken(data?.jwtToken)
+      basicStore.setToken(data?.access_token)
       router.push('/')
     })
     .catch((err) => {
