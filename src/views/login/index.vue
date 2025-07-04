@@ -47,7 +47,8 @@ import { onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useBasicStore } from '@/store/basic'
 import { elMessage, useElement } from '@/hooks/use-element'
-import { loginReq } from '@/api/user'
+import { getUserInfoReq, loginReq } from '@/api/user'
+import { sm2Encrypt } from '@/utils/smCrypto'
 
 /* listen router change and set the query  */
 const { settings } = useBasicStore()
@@ -102,11 +103,14 @@ const basicStore = useBasicStore()
 const loginFunc = () => {
   loginReq({
     username: subForm.username,
-    // password: sm2Encrypt(subForm.password)
+    password: sm2Encrypt(subForm.password)
   })
     .then(({ data }) => {
       elMessage('登录成功')
       basicStore.setToken(data?.access_token)
+      getUserInfoReq().then(({ data }) => {
+        basicStore.setUserInfo(data)
+      })
       router.push('/')
     })
     .catch((err) => {

@@ -29,3 +29,11 @@ export const loginOutReq = () => {
     method: 'post'
   })
 }
+
+// 获取用户数据
+export const getUserInfoReq = () => {
+  return axiosReq({
+    url: '/sys/user/info',
+    method: 'get'
+  })
+}
